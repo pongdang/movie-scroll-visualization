@@ -1,15 +1,13 @@
 import { scroller } from "./scroller.js";
 import { LineChart } from "./charts/line_chart.js";
-import {
-  getMovieData
-} from './services/movie_data.js';
+import { getMovieData } from "./services/movie_data.js";
 
 const WIDTH = 1000;
 const HEIGHT = 1000;
 
 let lineChart;
 
-setTimeout(drawInitial(), 100);
+// setTimeout(drawInitial(), 100);
 
 /*
   drawInitial 함수
@@ -18,18 +16,12 @@ setTimeout(drawInitial(), 100);
     2) 차트 클래스의 인스턴스 생성
 */
 function drawInitial() {
-  d3.select("#visbox")
-    .append("svg")
-    .attr("width", WIDTH)
-    .attr("height", HEIGHT)
-    .attr("opacity", 1);
+  d3.select("#visbox").append("svg").attr("width", WIDTH).attr("height", HEIGHT).attr("opacity", 1);
 
-  lineChart = new LineChart('line-chart', WIDTH, HEIGHT)
+  lineChart = new LineChart("line-chart", WIDTH, HEIGHT);
 
   draw1();
-
 }
-
 
 /*
   clean 함수
@@ -43,12 +35,11 @@ function clean(visType) {
     svg.selectAll(".movie-img").attr("opacity", 0);
     console.log("clean first chart");
   }
-  if (visType !== "isLine"){
+  if (visType !== "isLine") {
     lineChart.unshow();
     console.log("clean line chart");
   }
 }
-
 
 /*
   draw1 ~ draw3
@@ -76,31 +67,41 @@ function draw1() {
     .attr("height", "92%");
 }
 
-
 async function draw2() {
   clean("isLine");
 
-  const { dates, data } = await getMovieData('2019');
+  const { dates, data } = await getMovieData("2019");
   lineChart.drawChart(dates, data).show();
 }
-
 
 async function draw3() {
   clean("isLine");
 
-  const { dates, data } = await getMovieData('2020');
+  const { dates, data } = await getMovieData("2020");
   lineChart.drawChart(dates, data).show();
 }
-
 
 /*
   scroller에서 
   visFuncList에 등록된 순서대로 
   visbox sections에 맞춰 보여줌
 */
-const visFuncList = [
-  draw1,
-  draw2,
-  draw3,
-];
-scroller(visFuncList)();
+// const visFuncList = [draw1, draw2, draw3];
+// scroller(visFuncList)();
+scroller([
+  () => {
+    document.querySelector(".view1").classList.remove("hide");
+    document.querySelector(".view2").classList.add("hide");
+    document.querySelector(".view3").classList.add("hide");
+  },
+  () => {
+    document.querySelector(".view1").classList.add("hide");
+    document.querySelector(".view2").classList.remove("hide");
+    document.querySelector(".view3").classList.add("hide");
+  },
+  () => {
+    document.querySelector(".view1").classList.add("hide");
+    document.querySelector(".view2").classList.add("hide");
+    document.querySelector(".view3").classList.remove("hide");
+  },
+])();
